@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Home, User, Briefcase, Code, Mail } from 'lucide-react';
-import Hero from './components/Hero';
+import SimpleHero from './components/SimpleHero';
 
 // Navigation Component
 const Navigation = () => {
@@ -87,7 +87,7 @@ const Navigation = () => {
   );
 };
 
-// Simple test components for other pages
+// Simple test components
 const AboutPage = () => (
   <div className="min-h-screen bg-black text-white flex items-center justify-center">
     <div className="text-center">
@@ -134,14 +134,14 @@ const ContactPage = () => (
 );
 
 const App = () => {
-  console.log('App component is rendering with Hero component');
+  console.log('App component is rendering with SimpleHero');
   
   return (
     <Router>
       <Navigation />
       <div className="min-h-screen bg-black">
         <Routes>
-          <Route path="/" element={<Hero />} />
+          <Route path="/" element={<SimpleHero />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/skills" element={<SkillsPage />} />
           <Route path="/experience" element={<ExperiencePage />} />
