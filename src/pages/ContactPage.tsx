@@ -150,7 +150,7 @@ const ContactPage = () => {
               Get In Touch
             </h1>
             <p className="text-xl text-cyan-200 max-w-3xl mx-auto font-mono">
-              I'm always interested in new opportunities and collaborations. Let's discuss how we can work together to drive data-driven success.
+              Let's discuss how we can work together to drive data-driven success.
             </p>
           </motion.div>
 
