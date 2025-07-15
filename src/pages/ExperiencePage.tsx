@@ -222,7 +222,7 @@ const ExperiencePage = () => {
                   Project Excellence
                 </h3>
                 <p className="text-cyan-200 font-mono">
-                  Delivered high-impact projects for major organizations including JCB India and NHS UK.
+                  Delivered high-impact projects for major organizations.
                 </p>
               </div>
               <div className="text-center">
