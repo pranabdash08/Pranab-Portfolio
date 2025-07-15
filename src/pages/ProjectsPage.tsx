@@ -1,74 +1,12 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Github, Code, BarChart3, Database, Cpu } from 'lucide-react';
+import { ExternalLink, Github, Code } from 'lucide-react';
 import { projects } from '../data/projects';
 import { personalInfo } from '../data/personalInfo';
+import BackgroundElements from '../components/BackgroundElements';
 
-const AnimatedNeonBackground = () => (
-  <motion.div
-    className="fixed inset-0 -z-30 pointer-events-none"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 1 }}
-  >
-    <motion.div
-      className="absolute inset-0"
-      animate={{
-        backgroundPosition: [
-          '0% 50%',
-          '100% 50%',
-          '0% 50%'
-        ]
-      }}
-      transition={{
-        duration: 18,
-        repeat: Infinity,
-        ease: 'linear'
-      }}
-      style={{
-        background:
-          'linear-gradient(120deg, rgba(34,211,238,0.12) 0%, rgba(59,130,246,0.12) 50%, rgba(139,92,246,0.12) 100%)',
-        backgroundSize: '200% 200%'
-      }}
-    />
-    <motion.div
-      className="absolute w-96 h-96 rounded-full blur-3xl bg-cyan-400/20 left-[-10%] top-[-10%]"
-      animate={{ x: [0, 60, 0], y: [0, 40, 0] }}
-      transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-    />
-    <motion.div
-      className="absolute w-80 h-80 rounded-full blur-2xl bg-indigo-400/10 right-[-8%] bottom-[-8%]"
-      animate={{ x: [0, -40, 0], y: [0, -30, 0] }}
-      transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-    />
-  </motion.div>
-);
 
-const AnimatedDotsBackground = () => (
-  <div className="absolute inset-0 pointer-events-none -z-20">
-    {Array.from({ length: 30 }).map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`
-        }}
-        animate={{
-          opacity: [0, 1, 0],
-          scale: [0, 1, 0]
-        }}
-        transition={{
-          duration: 4 + Math.random() * 3,
-          delay: Math.random() * 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    ))}
-  </div>
-);
 
 const ProjectsPage = () => {
   useEffect(() => {
@@ -83,9 +21,8 @@ const ProjectsPage = () => {
         <meta name="description" content="Explore the portfolio of data analytics and business intelligence projects by Pranab Dash." />
       </Helmet>
 
-      <AnimatedNeonBackground />
+      <BackgroundElements />
       <div className="min-h-screen py-20 relative">
-        <AnimatedDotsBackground />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <motion.div
@@ -204,43 +141,7 @@ const ProjectsPage = () => {
             </div>
           </motion.div>
 
-          {/* Project Statistics */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            className="bg-gradient-to-r from-cyan-900/10 to-indigo-900/10 dark:from-cyan-900/20 dark:to-indigo-900/20 rounded-2xl p-8 shadow-xl backdrop-blur-md border border-cyan-400/10"
-          >
-            <h2 className="text-3xl font-bold text-cyan-200 mb-8 text-center font-mono">
-              Project Statistics
-            </h2>
-            <div className="grid md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-cyan-400 mb-2 font-mono">
-                  {projects.length}
-                </div>
-                <div className="text-cyan-200 font-mono">Total Projects</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-indigo-400 mb-2 font-mono">
-                  {projects.filter(p => p.live).length}
-                </div>
-                <div className="text-cyan-200 font-mono">Live Projects</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-blue-400 mb-2 font-mono">
-                  {new Set(projects.flatMap(p => p.technologies)).size}
-                </div>
-                <div className="text-cyan-200 font-mono">Technologies Used</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-orange-400 mb-2 font-mono">
-                  100%
-                </div>
-                <div className="text-cyan-200 font-mono">Success Rate</div>
-              </div>
-            </div>
-          </motion.div>
+
         </div>
       </div>
     </>

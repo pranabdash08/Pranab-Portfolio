@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowRight, Sparkles, Zap, Target, TrendingUp, Cpu, Database, Code, Globe, Terminal, Monitor } from 'lucide-react';
+import { ChevronDown, ArrowRight, Sparkles, Zap, Target, TrendingUp, Cpu, Database, Code, Globe, Terminal, Monitor, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { personalInfo } from '../data/personalInfo';
 
@@ -10,6 +10,7 @@ const Hero = () => {
   const [glitchActive, setGlitchActive] = useState(false);
   const [typingText, setTypingText] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const { scrollY } = useScroll();
   const navigate = useNavigate();
   
@@ -23,37 +24,86 @@ const Hero = () => {
     'Python Developer'
   ];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentText((prev) => (prev + 1) % roles.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  const description = personalInfo.description;
 
   useEffect(() => {
     const glitchInterval = setInterval(() => {
       setGlitchActive(true);
-      setTimeout(() => setGlitchActive(false), 200);
-    }, 4000);
+      setTimeout(() => setGlitchActive(false), 150); // Reduced from 200ms for more frequent glitches
+    }, 2000); // Reduced from 4000ms for more frequent electric shocks
     return () => clearInterval(glitchInterval);
   }, []);
 
+  // Add random electric shock effect
+  useEffect(() => {
+    const electricShock = () => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), Math.random() * 200 + 100); // Random duration 100-300ms
+    };
+
+    const shockInterval = setInterval(() => {
+      if (Math.random() < 0.3) { // 30% chance every interval
+        electricShock();
+      }
+    }, 3000); // Every 3 seconds
+
+    return () => clearInterval(shockInterval);
+  }, []);
+
+  // Unified typing and backspacing effect for roles
   useEffect(() => {
     const currentRole = roles[currentText];
-    setTypingText('');
-    
-    let index = 0;
-    const typeInterval = setInterval(() => {
-      if (index < currentRole.length) {
-        setTypingText(currentRole.substring(0, index + 1));
-        index++;
-      } else {
-        clearInterval(typeInterval);
-      }
-    }, 100);
+    const typeSpeed = 100;
+    const backspaceSpeed = 50;
+    const pauseTime = 2000;
+    const roleChangeDelay = 1500;
 
-    return () => clearInterval(typeInterval);
-  }, [currentText]);
+    let timeoutId: number;
+    let intervalId: number;
+
+    const startTyping = () => {
+      setTypingText('');
+      setCurrentCharIndex(0);
+      
+      let index = 0;
+      intervalId = setInterval(() => {
+        if (index < currentRole.length) {
+          setTypingText(currentRole.substring(0, index + 1));
+          setCurrentCharIndex(index + 1);
+          index++;
+        } else {
+          clearInterval(intervalId);
+          // Pause before backspacing
+          timeoutId = setTimeout(() => {
+            startBackspacing();
+          }, pauseTime);
+        }
+      }, typeSpeed);
+    };
+
+    const startBackspacing = () => {
+      intervalId = setInterval(() => {
+        setCurrentCharIndex(prev => {
+          if (prev <= 0) {
+            clearInterval(intervalId);
+            // Move to next role after backspacing is complete
+            timeoutId = setTimeout(() => {
+              setCurrentText((prev) => (prev + 1) % roles.length);
+            }, roleChangeDelay);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, backspaceSpeed);
+    };
+
+    startTyping();
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, [currentText, roles.length]);
 
   // Handle click outside for menu
   useEffect(() => {
@@ -103,47 +153,25 @@ const Hero = () => {
     { icon: Code, delay: 1, x: 25, y: 30, color: 'text-indigo-400' },
     { icon: Globe, delay: 1.5, x: -20, y: -10, color: 'text-sky-400' },
     { icon: Terminal, delay: 2, x: 15, y: 25, color: 'text-cyan-300' },
-    { icon: Monitor, delay: 2.5, x: -25, y: -15, color: 'text-blue-300' }
+    { icon: Monitor, delay: 2.5, x: -25, y: -15, color: 'text-blue-300' },
+    { icon: BarChart3, delay: 3, x: 35, y: -15, color: 'text-purple-400' },
+    { icon: TrendingUp, delay: 3.5, x: -35, y: 25, color: 'text-green-400' },
+    { icon: Target, delay: 4, x: 10, y: -35, color: 'text-orange-400' },
+    { icon: Sparkles, delay: 4.5, x: -15, y: 35, color: 'text-pink-400' },
+    { icon: Zap, delay: 5, x: 40, y: 15, color: 'text-yellow-400' },
+    { icon: Cpu, delay: 5.5, x: -40, y: -25, color: 'text-teal-400' }
   ];
 
+  // Use all floating elements for more dynamic background
+  const optimizedFloatingElements = floatingElements;
+
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black font-mono">
-      {/* Terminal-style background grid */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 25% 25%, rgba(34, 211, 238, 0.3) 0%, transparent 50%),
-                             radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.3) 0%, transparent 50%)`,
-            backgroundSize: '100px 100px, 150px 150px'
-          }}></div>
-        </div>
-        
-        {/* Matrix-like dots */}
-        <div className="absolute inset-0 opacity-10">
-          {Array.from({ length: 30 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`
-              }}
-              animate={{
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0]
-              }}
-              transition={{
-                duration: 4 + Math.random() * 3,
-                delay: Math.random() * 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Floating Elements */}
-        {floatingElements.map((element, index) => {
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
+
+
+      {/* Floating Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {optimizedFloatingElements.map((element, index) => {
           const Icon = element.icon;
           return (
             <motion.div
@@ -176,51 +204,80 @@ const Hero = () => {
 
       {/* Main Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto">
-        {/* Name with Glitch Effect */}
+        {/* Name with Enhanced Electric Shock Effect - Single Unit */}
         <motion.h1
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 sm:mb-8 font-mono tracking-wider relative"
         >
-          <span className={`bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent neon-text ${glitchActive ? 'animate-glitch' : ''}`}>
-            PRANAB
-          </span>
-          <br />
-          <span className={`bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent neon-text ${glitchActive ? 'animate-glitch' : ''}`}>
-            DASH
+          <span className={`bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent neon-text ${glitchActive ? 'animate-electric-jitter' : ''}`}>
+            PRANAB DASH
           </span>
           
-          {/* Glitch overlay */}
+          {/* Enhanced Electric Shock overlays */}
           {glitchActive && (
             <>
+              {/* Primary electric shock layer */}
               <motion.span
-                initial={{ x: 0 }}
-                animate={{ x: [0, -2, 2, 0] }}
-                transition={{ duration: 0.2 }}
-                className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-80"
-                style={{ filter: 'blur(0.5px)' }}
+                initial={{ x: 0, y: 0 }}
+                animate={{ 
+                  x: [0, -3, 3, -2, 2, 0],
+                  y: [0, -1, 1, -1, 1, 0],
+                  scale: [1, 1.02, 0.98, 1.01, 0.99, 1]
+                }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-90 animate-electric-color-shift"
+                style={{ filter: 'blur(0.3px)' }}
               >
-                PRANAB
-                <br />
-                DASH
+                PRANAB DASH
               </motion.span>
+              
+              {/* Electric shock red layer */}
               <motion.span
-                initial={{ x: 0 }}
-                animate={{ x: [0, 2, -2, 0] }}
-                transition={{ duration: 0.2 }}
-                className="absolute inset-0 bg-gradient-to-r from-red-400 via-pink-400 to-purple-400 bg-clip-text text-transparent opacity-60"
-                style={{ filter: 'blur(0.5px)' }}
+                initial={{ x: 0, y: 0 }}
+                animate={{ 
+                  x: [0, 2, -2, 1, -1, 0],
+                  y: [0, 1, -1, 0, 0, 0],
+                  scale: [1, 1.01, 0.99, 1.005, 0.995, 1]
+                }}
+                transition={{ duration: 0.12, ease: "easeInOut" }}
+                className="absolute inset-0 bg-gradient-to-r from-red-400 via-pink-400 to-purple-400 bg-clip-text text-transparent opacity-70 animate-electric-jitter"
+                style={{ filter: 'blur(0.4px)' }}
               >
-                PRANAB
-                <br />
-                DASH
+                PRANAB DASH
+              </motion.span>
+              
+              {/* Electric shock yellow layer */}
+              <motion.span
+                initial={{ x: 0, y: 0 }}
+                animate={{ 
+                  x: [0, -1, 1, -0.5, 0.5, 0],
+                  y: [0, 0, 0, -0.5, 0.5, 0],
+                  scale: [1, 1.005, 0.995, 1.002, 0.998, 1]
+                }}
+                transition={{ duration: 0.1, ease: "easeInOut" }}
+                className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent opacity-50 animate-electric-color-shift"
+                style={{ filter: 'blur(0.6px)' }}
+              >
+                PRANAB DASH
+              </motion.span>
+              
+              {/* Electric shock white flash */}
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 0.08 }}
+                className="absolute inset-0 bg-white bg-clip-text text-transparent animate-electric-flash"
+                style={{ filter: 'blur(0.2px)' }}
+              >
+                PRANAB DASH
               </motion.span>
             </>
           )}
         </motion.h1>
 
-        {/* Animated Role */}
+        {/* Animated Role with Typing/Backspacing Effect */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -228,25 +285,25 @@ const Hero = () => {
           className="mb-8"
         >
           <div className="text-2xl md:text-3xl font-medium text-cyan-300 font-mono tracking-wide">
-            <span className="text-cyan-400">$</span> {typingText}
+            <span className="text-cyan-400">$</span> {typingText.substring(0, currentCharIndex)}
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
+              transition={{ duration: 0.8, repeat: Infinity }}
               className="ml-1 text-cyan-400"
             >
-              _
+              |
             </motion.span>
           </div>
         </motion.div>
 
-        {/* Description */}
+        {/* Description - Normal Display */}
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.1 }}
           className="text-base sm:text-lg text-blue-200 max-w-4xl mx-auto mb-8 sm:mb-12 leading-relaxed font-light px-2"
         >
-          {personalInfo.description}
+          {description}
         </motion.p>
 
         {/* Tech Stack */}
@@ -394,16 +451,49 @@ const Hero = () => {
       </div>
 
       {/* Parallax Background Elements */}
-      <motion.div
-        style={{ y }}
-        className="absolute inset-0 pointer-events-none"
-      >
-        <div className="absolute top-20 left-10 w-2 h-2 bg-cyan-400 rounded-full opacity-60 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400 rounded-full opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-40 left-20 w-3 h-3 bg-indigo-400 rounded-full opacity-50 animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-1 h-1 bg-cyan-400 rounded-full opacity-30 animate-pulse"></div>
-      </motion.div>
-    </div>
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400 rounded-full opacity-30"
+        />
+        <motion.div
+          animate={{ y: [0, 20, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-3/4 right-1/4 w-1 h-1 bg-blue-400 rounded-full opacity-40"
+        />
+        <motion.div
+          animate={{ y: [0, -15, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-indigo-400 rounded-full opacity-35"
+        />
+        <motion.div
+          animate={{ y: [0, 25, 0], x: [0, 10, 0] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/3 right-1/3 w-1 h-1 bg-purple-400 rounded-full opacity-25"
+        />
+        <motion.div
+          animate={{ y: [0, -18, 0], x: [0, -8, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-1/3 right-1/4 w-1.5 h-1.5 bg-green-400 rounded-full opacity-30"
+        />
+        <motion.div
+          animate={{ y: [0, 22, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-2/3 left-1/5 w-1 h-1 bg-orange-400 rounded-full opacity-20"
+        />
+        <motion.div
+          animate={{ y: [0, -12, 0], x: [0, 15, 0] }}
+          transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 right-1/5 w-1 h-1 bg-pink-400 rounded-full opacity-35"
+        />
+        <motion.div
+          animate={{ y: [0, 16, 0], x: [0, -12, 0] }}
+          transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-1/3 left-1/2 w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-25"
+        />
+      </div>
+    </section>
   );
 };
 

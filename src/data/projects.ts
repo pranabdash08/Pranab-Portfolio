@@ -12,8 +12,8 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: "1",
-    title: "Healthcare Service Insights Dashboard - NHS UK",
-    description: "Developed comprehensive healthcare analytics dashboard for NHS UK, providing insights into patient demographics, appointment trends, and service efficiency across the UK healthcare system.",
+    title: "Healthcare Service Insights Dashboard",
+    description: "Developed comprehensive healthcare analytics dashboard with NHS UK Data, providing insights into patient demographics, appointment trends, and service efficiency across the UK healthcare system.",
     category: "Healthcare Analytics",
     technologies: ["Tableau", "SQL", "Python", "Statistical Analysis"],
     features: [
@@ -26,8 +26,8 @@ export const projects: Project[] = [
   },
   {
     id: "2",
-    title: "JCB India Operational Analytics Dashboard",
-    description: "Created advanced Power BI dashboards for JCB India, transforming over 50,000 data points into interactive visualizations to optimize operational workflows and resource allocation.",
+    title: "Operations Analytics Dashboard",
+    description: "Created advanced Power BI dashboards for a renowned vechile manufacturer, transforming over 50,000 data points into interactive visualizations to optimize operational workflows and resource allocation.",
     category: "Business Intelligence",
     technologies: ["Power BI", "SQL", "Python", "Data Visualization"],
     features: [

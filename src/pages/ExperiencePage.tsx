@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { Briefcase, Calendar, MapPin, Building, Award, Users } from 'lucide-react';
 import { experience } from '../data/experience';
 import { personalInfo } from '../data/personalInfo';
+import BackgroundElements from '../components/BackgroundElements';
 
 const AnimatedNeonBackground = () => (
   <motion.div
@@ -81,8 +82,7 @@ const ExperiencePage = () => {
         <title>Experience - {personalInfo.name}</title>
         <meta name="description" content="Explore the professional experience and career journey of Pranab Dash in business analytics and data science." />
       </Helmet>
-      <AnimatedNeonBackground />
-      <AnimatedDotsBackground />
+      <BackgroundElements />
       <div className="min-h-screen py-20 relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -222,7 +222,7 @@ const ExperiencePage = () => {
                   Project Excellence
                 </h3>
                 <p className="text-cyan-200 font-mono">
-                  Delivered high-impact projects for major organizations including JCB India and NHS UK.
+                  Delivered high-impact projects for major organizations.
                 </p>
               </div>
               <div className="text-center">

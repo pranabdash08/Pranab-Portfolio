@@ -7,6 +7,7 @@ const LoadingScreen = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [loadingText, setLoadingText] = useState('')
   const [showComplete, setShowComplete] = useState(false)
+  const [isExiting, setIsExiting] = useState(false)
 
   const bootSteps = [
     'Initializing system...',
@@ -28,11 +29,11 @@ const LoadingScreen = () => {
           return prev + 1
         } else {
           clearInterval(stepInterval)
-          setTimeout(() => setShowComplete(true), 500)
+          setTimeout(() => setShowComplete(true), 200) // Reduced from 500ms
           return prev
         }
       })
-    }, 300)
+    }, 150) // Reduced from 300ms
 
     return () => clearInterval(stepInterval)
   }, [])
@@ -46,14 +47,37 @@ const LoadingScreen = () => {
         }
         return prev
       })
-    }, 50)
+    }, 25) // Reduced from 50ms
 
     return () => clearInterval(textInterval)
   }, [currentStep])
 
+  // Auto-exit after showing completion message
+  useEffect(() => {
+    if (showComplete) {
+      const exitTimer = setTimeout(() => {
+        setIsExiting(true)
+      }, 800) // Show completion message for 800ms before exiting
+      return () => clearTimeout(exitTimer)
+    }
+  }, [showComplete])
+
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 font-mono">
-      <div className="w-full max-w-4xl mx-8">
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: isExiting ? 0 : 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+      className="fixed inset-0 bg-black flex items-center justify-center z-50 font-mono"
+    >
+      <motion.div 
+        className="w-full max-w-4xl mx-8"
+        animate={{ 
+          scale: isExiting ? 0.95 : 1,
+          y: isExiting ? -20 : 0
+        }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -78,7 +102,7 @@ const LoadingScreen = () => {
                 opacity: index <= currentStep ? 1 : 0,
                 x: index <= currentStep ? 0 : -20
               }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }} // Reduced from 0.1
               className={`text-sm ${
                 index < currentStep 
                   ? 'text-green-400' 
@@ -94,7 +118,7 @@ const LoadingScreen = () => {
               {index === currentStep && (
                 <motion.span
                   animate={{ opacity: [1, 0, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
+                  transition={{ duration: 0.8, repeat: Infinity }}
                   className="text-cyan-400"
                 >
                   _
@@ -108,7 +132,7 @@ const LoadingScreen = () => {
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${((currentStep + 1) / bootSteps.length) * 100}%` }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }} // Reduced from 0.3
           className="h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-full mb-8 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
         />
 
@@ -116,7 +140,7 @@ const LoadingScreen = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.5 }} // Reduced from 1
           className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-400 mb-8"
         >
           <div>
@@ -137,12 +161,22 @@ const LoadingScreen = () => {
         <AnimatePresence>
           {showComplete && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
               className="text-center"
             >
               <div className="text-2xl font-bold text-cyan-400 mb-2">
-                <span className="text-green-400">✓</span> SYSTEM READY
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="text-green-400 mr-2"
+                >
+                  ✓
+                </motion.span>
+                SYSTEM READY
               </div>
               <div className="text-sm text-gray-400">
                 Welcome to {personalInfo.name}'s Portfolio
@@ -162,7 +196,7 @@ const LoadingScreen = () => {
 
         {/* Floating Tech Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(4)].map((_, i) => ( // Reduced from 8 to 4 elements
             <motion.div
               key={i}
               initial={{ 
@@ -177,17 +211,17 @@ const LoadingScreen = () => {
                 scale: [0, 1, 0]
               }}
               transition={{ 
-                duration: 6,
+                duration: 3, // Reduced from 4
                 repeat: Infinity,
-                delay: i * 0.8,
+                delay: i * 0.3, // Reduced from 0.5
                 ease: "easeInOut"
               }}
               className="absolute w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_5px_rgba(34,211,238,0.8)]"
             />
           ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 

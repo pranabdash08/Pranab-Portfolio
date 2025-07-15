@@ -49,6 +49,18 @@
     animation: glitch 0.3s ease-in-out;
   }
   
+  .animate-electric-flash {
+    animation: electric-flash 0.2s ease-in-out;
+  }
+  
+  .animate-electric-jitter {
+    animation: electric-jitter 0.15s ease-in-out;
+  }
+  
+  .animate-electric-color-shift {
+    animation: electric-color-shift 0.25s ease-in-out;
+  }
+  
   .neon-text {
     text-shadow: 
       0 0 5px currentColor,
@@ -130,25 +142,151 @@
   }
 }
 
-/* Glitch Animation */
+/* Enhanced Electric Shock Glitch Animation */
 @keyframes glitch {
   0% {
     transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+  10% {
+    transform: translate(-3px, 1px);
+    filter: hue-rotate(90deg);
   }
   20% {
+    transform: translate(3px, -1px);
+    filter: hue-rotate(180deg);
+  }
+  30% {
     transform: translate(-2px, 2px);
+    filter: hue-rotate(270deg);
   }
   40% {
-    transform: translate(-2px, -2px);
+    transform: translate(2px, -2px);
+    filter: hue-rotate(360deg);
+  }
+  50% {
+    transform: translate(-1px, 1px);
+    filter: hue-rotate(0deg);
   }
   60% {
-    transform: translate(2px, 2px);
+    transform: translate(1px, -1px);
+    filter: hue-rotate(90deg);
+  }
+  70% {
+    transform: translate(-0.5px, 0.5px);
+    filter: hue-rotate(180deg);
   }
   80% {
-    transform: translate(2px, -2px);
+    transform: translate(0.5px, -0.5px);
+    filter: hue-rotate(270deg);
   }
   100% {
     transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Electric Shock Flash Animation */
+@keyframes electric-flash {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  20% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  40% {
+    opacity: 0.6;
+    transform: scale(0.99);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+  60% {
+    opacity: 0.4;
+    transform: scale(0.995);
+  }
+  70% {
+    opacity: 0.8;
+    transform: scale(1.005);
+  }
+  80% {
+    opacity: 0.2;
+    transform: scale(0.998);
+  }
+  90% {
+    opacity: 0.6;
+    transform: scale(1.002);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Electric Shock Jitter Animation */
+@keyframes electric-jitter {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
+    transform: translate(-2px, -1px) rotate(-0.5deg);
+  }
+  20% {
+    transform: translate(2px, 1px) rotate(0.5deg);
+  }
+  30% {
+    transform: translate(-1px, 2px) rotate(-0.3deg);
+  }
+  40% {
+    transform: translate(1px, -2px) rotate(0.3deg);
+  }
+  50% {
+    transform: translate(-0.5px, 1px) rotate(-0.2deg);
+  }
+  60% {
+    transform: translate(0.5px, -1px) rotate(0.2deg);
+  }
+  70% {
+    transform: translate(-0.3px, 0.5px) rotate(-0.1deg);
+  }
+  80% {
+    transform: translate(0.3px, -0.5px) rotate(0.1deg);
+  }
+  90% {
+    transform: translate(-0.1px, 0.2px) rotate(-0.05deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* Electric Shock Color Shift */
+@keyframes electric-color-shift {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  25% {
+    filter: hue-rotate(90deg) brightness(1.2);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(0.8);
+  }
+  75% {
+    filter: hue-rotate(270deg) brightness(1.1);
+  }
+  100% {
+    filter: hue-rotate(360deg) brightness(1);
   }
 }
 

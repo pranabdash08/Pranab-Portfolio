@@ -5,6 +5,35 @@ import Hero from '../components/Hero';
 import { personalInfo } from '../data/personalInfo';
 
 const HomePage = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeInOut",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const childVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 30,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -26,11 +55,13 @@ const HomePage = () => {
       </Helmet>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
       >
-        <Hero />
+        <motion.div variants={childVariants}>
+          <Hero />
+        </motion.div>
       </motion.div>
     </>
   );

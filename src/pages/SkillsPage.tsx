@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
-import { motion, useMotionValue, useTransform, useAnimationFrame } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Code, Database, BarChart3, Cpu, Zap, Target, Award, Terminal, Monitor } from 'lucide-react';
+import { Code, Zap, Target, Award } from 'lucide-react';
 import { skills } from '../data/skills';
 import { personalInfo } from '../data/personalInfo';
+import BackgroundElements from '../components/BackgroundElements';
 
 // Certifications from HTML
 const certifications = [
@@ -49,14 +50,7 @@ const certifications = [
   },
 ];
 
-const floatingElements = [
-  { icon: Cpu, delay: 0, x: 20, y: -20, color: 'text-cyan-400' },
-  { icon: Database, delay: 0.5, x: -30, y: 10, color: 'text-blue-400' },
-  { icon: Code, delay: 1, x: 25, y: 30, color: 'text-indigo-400' },
-  { icon: BarChart3, delay: 1.5, x: -20, y: -10, color: 'text-sky-400' },
-  { icon: Terminal, delay: 2, x: 15, y: 25, color: 'text-cyan-300' },
-  { icon: Monitor, delay: 2.5, x: -25, y: -15, color: 'text-blue-300' }
-];
+
 
 const AnimatedNeonBackground = () => (
   <motion.div
@@ -99,85 +93,9 @@ const AnimatedNeonBackground = () => (
   </motion.div>
 );
 
-const ParticleLayer = () => (
-  <div className="absolute inset-0 pointer-events-none -z-15">
-    {Array.from({ length: 40 }).map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-1 h-1 bg-cyan-300/80 rounded-full"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`
-        }}
-        animate={{
-          opacity: [0.3, 1, 0.3],
-          y: [0, 10 + Math.random() * 30, 0]
-        }}
-        transition={{
-          duration: 7 + Math.random() * 4,
-          delay: Math.random() * 2,
-          repeat: Infinity,
-          ease: 'easeInOut'
-        }}
-      />
-    ))}
-  </div>
-);
 
-// Parallax Floating Elements
-const ParallaxFloatingElements = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
 
-  useAnimationFrame(() => {
-    if (ref.current) {
-      ref.current.onmousemove = (e) => {
-        const { left, top, width, height } = ref.current!.getBoundingClientRect();
-        const x = (e.clientX - left - width / 2) / width;
-        const y = (e.clientY - top - height / 2) / height;
-        mouseX.set(x);
-        mouseY.set(y);
-      };
-    }
-  });
 
-  return (
-    <div ref={ref} className="absolute inset-0 -z-10">
-      {floatingElements.map((element, index) => {
-        const Icon = element.icon;
-        const x = useTransform(mouseX, (v) => v * element.x * 2);
-        const y = useTransform(mouseY, (v) => v * element.y * 2);
-        return (
-          <motion.div
-            key={index}
-            style={{
-              left: `${50 + element.x}%`,
-              top: `${50 + element.y}%`,
-              x,
-              y
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: [0, 1, 0],
-              scale: [0, 1, 0],
-              rotate: [0, 360]
-            }}
-            transition={{
-              duration: 8,
-              delay: element.delay,
-              repeat: Infinity,
-              ease: 'easeInOut'
-            }}
-            className={`absolute ${element.color} drop-shadow-[0_0_10px_currentColor]`}
-          >
-            <Icon size={24} />
-          </motion.div>
-        );
-      })}
-    </div>
-  );
-};
 
 const SkillsPage = () => {
   return (
@@ -188,10 +106,7 @@ const SkillsPage = () => {
       </Helmet>
 
       <div className="min-h-screen py-20 bg-black font-mono relative overflow-hidden flex flex-col items-center justify-center">
-        <AnimatedNeonBackground />
-        {/* <MatrixLines /> */}
-        <ParticleLayer />
-        <ParallaxFloatingElements />
+        <BackgroundElements />
         {/* Remove the following block: Animated Background Grid (keep for extra depth) */}
         {/* <div className="absolute inset-0 -z-25">
           <div className="absolute inset-0 opacity-8">

@@ -1,17 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Award, BookOpen, Target, Users, TrendingUp, Cpu, Database, Code, Globe, Terminal, Monitor } from 'lucide-react';
+import { Award, BookOpen, Target, Users, TrendingUp } from 'lucide-react';
 import { personalInfo } from '../data/personalInfo';
-
-const floatingElements = [
-  { icon: Cpu, delay: 0, x: 20, y: -20, color: 'text-cyan-400' },
-  { icon: Database, delay: 0.5, x: -30, y: 10, color: 'text-blue-400' },
-  { icon: Code, delay: 1, x: 25, y: 30, color: 'text-indigo-400' },
-  { icon: Globe, delay: 1.5, x: -20, y: -10, color: 'text-sky-400' },
-  { icon: Terminal, delay: 2, x: 15, y: 25, color: 'text-cyan-300' },
-  { icon: Monitor, delay: 2.5, x: -25, y: -15, color: 'text-blue-300' }
-];
+import BackgroundElements from '../components/BackgroundElements';
 
 const features = [
   {
@@ -59,30 +51,7 @@ const approachSteps = [
   }
 ];
 
-const AnimatedDotsBackground = () => (
-  <div className="absolute inset-0 pointer-events-none -z-20">
-    {Array.from({ length: 30 }).map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`
-        }}
-        animate={{
-          opacity: [0, 1, 0],
-          scale: [0, 1, 0]
-        }}
-        transition={{
-          duration: 4 + Math.random() * 3,
-          delay: Math.random() * 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    ))}
-  </div>
-);
+
 
 const AboutPage = () => {
   return (
@@ -93,47 +62,7 @@ const AboutPage = () => {
       </Helmet>
 
       <div className="min-h-screen py-20 bg-black font-mono relative overflow-hidden flex flex-col items-center justify-center">
-        <AnimatedDotsBackground />
-        {/* Animated Background Grid */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `radial-gradient(circle at 25% 25%, rgba(34, 211, 238, 0.3) 0%, transparent 50%),
-                               radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.3) 0%, transparent 50%)`,
-              backgroundSize: '100px 100px, 150px 150px'
-            }}></div>
-          </div>
-          {/* Floating Elements */}
-          {floatingElements.map((element, index) => {
-            const Icon = element.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 1, 0],
-                  scale: [0, 1, 0],
-                  x: [0, element.x, 0],
-                  y: [0, element.y, 0],
-                  rotate: [0, 360]
-                }}
-                transition={{
-                  duration: 8,
-                  delay: element.delay,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className={`absolute ${element.color} drop-shadow-[0_0_10px_currentColor]`}
-                style={{
-                  left: `${50 + element.x}%`,
-                  top: `${50 + element.y}%`
-                }}
-              >
-                <Icon size={24} />
-              </motion.div>
-            );
-          })}
-        </div>
+        <BackgroundElements />
 
         <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
           {/* Header */}

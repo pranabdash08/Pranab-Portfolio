@@ -1,80 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Mail, Phone, MapPin, Linkedin, Github, MessageSquare, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Github, MessageSquare, Send, Loader2 } from 'lucide-react';
 import { contactInfo } from '../data/contactInfo';
 import { personalInfo } from '../data/personalInfo';
+import { useEmailJS } from '../hooks/useEmailJS';
+import BackgroundElements from '../components/BackgroundElements';
 
-const AnimatedNeonBackground = () => (
-  <motion.div
-    className="fixed inset-0 -z-30 pointer-events-none"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 1 }}
-  >
-    <motion.div
-      className="absolute inset-0"
-      animate={{
-        backgroundPosition: [
-          '0% 50%',
-          '100% 50%',
-          '0% 50%'
-        ]
-      }}
-      transition={{
-        duration: 18,
-        repeat: Infinity,
-        ease: 'linear'
-      }}
-      style={{
-        background:
-          'linear-gradient(120deg, rgba(34,211,238,0.12) 0%, rgba(59,130,246,0.12) 50%, rgba(139,92,246,0.12) 100%)',
-        backgroundSize: '200% 200%'
-      }}
-    />
-    <motion.div
-      className="absolute w-96 h-96 rounded-full blur-3xl bg-cyan-400/20 left-[-10%] top-[-10%]"
-      animate={{ x: [0, 60, 0], y: [0, 40, 0] }}
-      transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-    />
-    <motion.div
-      className="absolute w-80 h-80 rounded-full blur-2xl bg-indigo-400/10 right-[-8%] bottom-[-8%]"
-      animate={{ x: [0, -40, 0], y: [0, -30, 0] }}
-      transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-    />
-  </motion.div>
-);
 
-const AnimatedDotsBackground = () => (
-  <div className="absolute inset-0 pointer-events-none -z-20">
-    {Array.from({ length: 30 }).map((_, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-        style={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`
-        }}
-        animate={{
-          opacity: [0, 1, 0],
-          scale: [0, 1, 0]
-        }}
-        transition={{
-          duration: 4 + Math.random() * 3,
-          delay: Math.random() * 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    ))}
-  </div>
-);
 
 const ContactPage = () => {
   useEffect(() => {
     document.body.classList.add('font-mono');
     return () => document.body.classList.remove('font-mono');
   }, []);
+
+  const { sendEmail, isLoading } = useEmailJS();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -83,10 +24,20 @@ const ContactPage = () => {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    
+    const success = await sendEmail(formData);
+    
+    if (success) {
+      // Reset form on successful submission
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -135,8 +86,7 @@ const ContactPage = () => {
         <meta name="description" content="Get in touch with Pranab Dash for business analytics opportunities and collaborations." />
       </Helmet>
 
-      <AnimatedNeonBackground />
-      <AnimatedDotsBackground />
+      <BackgroundElements />
       <div className="min-h-screen py-20 relative">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12">
           {/* Header */}
@@ -150,7 +100,7 @@ const ContactPage = () => {
               Get In Touch
             </h1>
             <p className="text-xl text-cyan-200 max-w-3xl mx-auto font-mono">
-              I'm always interested in new opportunities and collaborations. Let's discuss how we can work together to drive data-driven success.
+              Let's discuss how we can work together to drive data-driven success.
             </p>
           </motion.div>
 
@@ -287,10 +237,21 @@ const ContactPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 text-white font-bold font-mono shadow-lg hover:scale-105 transition-transform duration-300"
+                  disabled={isLoading}
+                  className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 text-white font-bold font-mono shadow-lg hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <Send size={20} /> Send Message
+                    {isLoading ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={20} />
+                        Send Message
+                      </>
+                    )}
                   </span>
                 </button>
               </form>

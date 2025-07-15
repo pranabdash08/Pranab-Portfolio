@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, User, Briefcase, Code, Mail, Phone, Sparkles } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import emailjs from '@emailjs/browser';
+import { EMAILJS_CONFIG } from './config/emailjs';
 import LoadingScreen from './components/LoadingScreen';
 import ExploreMenu from './components/ExploreMenu';
 import Hero from './components/Hero';
-import About from './components/About';
-import Skills from './components/Skills';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 // Page Components
@@ -21,19 +18,36 @@ import ExperiencePage from './pages/ExperiencePage';
 import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
 
+// Throttle function for performance optimization
+const throttle = (func: Function, limit: number) => {
+  let inThrottle: boolean;
+  return function(this: any, ...args: any[]) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  }
+};
+
 const Navigation = () => {
   const [exploreMenuOpen, setExploreMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
+  // Optimized scroll handler with throttling
+  const handleScroll = useCallback(
+    throttle(() => {
       setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
+    }, 16), // ~60fps
+    []
+  );
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   // Prevent background scroll when ExploreMenu is open
   useEffect(() => {
@@ -171,36 +185,53 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Initialize EmailJS
+    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+    
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 4500); // Extended to 4.5 seconds to match the boot sequence
+    }, 2500); // Reduced from 4500ms to 2500ms for faster loading
 
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <Router>
-      {/* Render Navigation in a portal to ensure it is always on top */}
-      {createPortal(<Navigation />, document.body)}
-      <div className="min-h-screen bg-black">
-        <main className="pt-16">
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/skills" element={<SkillsPage />} />
-              <Route path="/experience" element={<ExperiencePage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-            </Routes>
-          </AnimatePresence>
-        </main>
-        <Footer />
-      </div>
+      <motion.div 
+        className="min-h-screen bg-black"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <LoadingScreen key="loading" />
+          ) : (
+            <motion.div
+              key="main"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              {/* Render Navigation in a portal to ensure it is always on top */}
+              {createPortal(<Navigation />, document.body)}
+              <main className="pt-16">
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/skills" element={<SkillsPage />} />
+                    <Route path="/experience" element={<ExperiencePage />} />
+                    <Route path="/projects" element={<ProjectsPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                  </Routes>
+                </AnimatePresence>
+              </main>
+              <Footer />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </Router>
   );
 };
