@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Home, User, Briefcase, Code, Mail } from 'lucide-react';
+import Hero from './components/Hero';
 
 // Navigation Component
 const Navigation = () => {
@@ -86,16 +87,7 @@ const Navigation = () => {
   );
 };
 
-// Simple test components
-const HomePage = () => (
-  <div className="min-h-screen bg-black text-white flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-cyan-400 mb-4">Welcome to My Portfolio</h1>
-      <p className="text-gray-300">Home Page - Working!</p>
-    </div>
-  </div>
-);
-
+// Simple test components for other pages
 const AboutPage = () => (
   <div className="min-h-screen bg-black text-white flex items-center justify-center">
     <div className="text-center">
@@ -142,14 +134,14 @@ const ContactPage = () => (
 );
 
 const App = () => {
-  console.log('App component is rendering with navigation');
+  console.log('App component is rendering with Hero component');
   
   return (
     <Router>
       <Navigation />
-      <div className="min-h-screen bg-black pt-16">
+      <div className="min-h-screen bg-black">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Hero />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/skills" element={<SkillsPage />} />
           <Route path="/experience" element={<ExperiencePage />} />
